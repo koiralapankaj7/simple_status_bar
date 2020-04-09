@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - simple_status_bar (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - simple_status_bar (from `.symlinks/plugins/simple_status_bar/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  simple_status_bar:
+    :path: ".symlinks/plugins/simple_status_bar/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  simple_status_bar: a9ff229b1ec74b5f357ea373bedd61e98187a8f0
+
+PODFILE CHECKSUM: 1b66dae606f75376c5f2135a8290850eeb09ae83
+
+COCOAPODS: 1.9.1
