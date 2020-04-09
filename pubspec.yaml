@@ -1,0 +1,20 @@
+name: simple_status_bar
+description: Simple flutter plugin which will toggle status bar
+version: 0.0.1
+homepage: https://github.com/koiralapankajgit/simple_status_bar
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  plugin:
+    androidPackage: io.playsof.simple_status_bar
+    pluginClass: SimpleStatusBarPlugin
