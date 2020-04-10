@@ -24,8 +24,18 @@ public class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityA
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         val channel = MethodChannel(flutterPluginBinding.binaryMessenger, "simple_status_bar")
-        channel.setMethodCallHandler(this);
+        channel.setMethodCallHandler(SimpleStatusBarPlugin());
     }
+
+    companion object {
+        @JvmStatic
+        fun registerWith(registrar: Registrar) {
+            val channel = MethodChannel(registrar.messenger(), "simple_status_bar")
+            channel.setMethodCallHandler(SimpleStatusBarPlugin())
+        }
+    }
+
+
 
     override fun onDetachedFromActivity() {
     }

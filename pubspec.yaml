@@ -1,6 +1,6 @@
 name: simple_status_bar
 description: Simple flutter plugin which will toggle status bar
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/koiralapankajgit/simple_status_bar
 
 environment:
