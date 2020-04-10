@@ -24,18 +24,15 @@ public class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityA
 
 
     override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-//        val channel = MethodChannel(flutterPluginBinding.binaryMessenger, "simple_status_bar")
-//        channel.setMethodCallHandler(this)
         onAttachedToEngine(binding.applicationContext, binding.binaryMessenger)
     }
 
     companion object {
         @JvmStatic
         fun registerWith(registrar: Registrar) {
-            val  simpleStatusBarPlugin: SimpleStatusBarPlugin = SimpleStatusBarPlugin()
-            simpleStatusBarPlugin.onAttachedToEngine(registrar.context(), registrar.messenger())
-//            val channel = MethodChannel(registrar.messenger(), "simple_status_bar")
-//            channel.setMethodCallHandler(SimpleStatusBarPlugin())
+            val  instance: SimpleStatusBarPlugin = SimpleStatusBarPlugin()
+            instance.activity = registrar.activity()
+            instance.onAttachedToEngine(registrar.context(), registrar.messenger())
         }
     }
 
@@ -51,6 +48,7 @@ public class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityA
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+        onAttachedToActivity(binding)
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
@@ -58,6 +56,7 @@ public class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityA
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
+        onDetachedFromActivity()
     }
 
 
