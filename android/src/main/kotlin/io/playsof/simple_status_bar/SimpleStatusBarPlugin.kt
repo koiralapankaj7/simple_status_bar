@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -22,22 +23,31 @@ public class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityA
     private var activity: Activity? = null
 
 
-    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        val channel = MethodChannel(flutterPluginBinding.binaryMessenger, "simple_status_bar")
-        channel.setMethodCallHandler(SimpleStatusBarPlugin());
+    override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+//        val channel = MethodChannel(flutterPluginBinding.binaryMessenger, "simple_status_bar")
+//        channel.setMethodCallHandler(this)
+        onAttachedToEngine(binding.applicationContext, binding.binaryMessenger)
     }
 
     companion object {
         @JvmStatic
         fun registerWith(registrar: Registrar) {
-            val channel = MethodChannel(registrar.messenger(), "simple_status_bar")
-            channel.setMethodCallHandler(SimpleStatusBarPlugin())
+            val  simpleStatusBarPlugin: SimpleStatusBarPlugin = SimpleStatusBarPlugin()
+            simpleStatusBarPlugin.onAttachedToEngine(registrar.context(), registrar.messenger())
+//            val channel = MethodChannel(registrar.messenger(), "simple_status_bar")
+//            channel.setMethodCallHandler(SimpleStatusBarPlugin())
         }
+    }
+
+    fun onAttachedToEngine(context: Context, binaryMessenger: BinaryMessenger){
+        val channel = MethodChannel(binaryMessenger, "simple_status_bar")
+        channel.setMethodCallHandler(this)
     }
 
 
 
     override fun onDetachedFromActivity() {
+
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
@@ -69,7 +79,7 @@ public class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityA
         }
 
         try {
-            val hidden : Boolean? = call.argument<Boolean>("hidden")
+            val hidden : Boolean? = call.argument<Boolean>("hide")
 
             if (hidden!!) {
                 this.activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
