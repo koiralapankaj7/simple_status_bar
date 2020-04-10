@@ -27,7 +27,7 @@ public class SwiftSimpleStatusBarPlugin: NSObject, FlutterPlugin {
     
     private func toggleStatusBar(_ call: FlutterMethodCall, _ result: FlutterResult) {
         let args : Dictionary<String, AnyObject> = call.arguments as! Dictionary<String, AnyObject>
-        let hiddenArgs : Bool = args["hidden"] as! Bool
+        let hide : Bool = args["hide"] as! Bool
         let animationArgs = args["animation"] as! String
         var animation: UIStatusBarAnimation
         
@@ -38,7 +38,7 @@ public class SwiftSimpleStatusBarPlugin: NSObject, FlutterPlugin {
         } else {
             animation = .none
         }
-        UIApplication.shared.setStatusBarHidden(hiddenArgs, with: animation)
+        UIApplication.shared.setStatusBarHidden(hide, with: animation)
         
         
     }
