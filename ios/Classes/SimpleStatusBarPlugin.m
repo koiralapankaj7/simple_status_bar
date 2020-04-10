@@ -12,22 +12,4 @@
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   [SwiftSimpleStatusBarPlugin registerWithRegistrar:registrar];
 }
-
-// - (void)handleSetHidden:(FlutterMethodCall *)call result:(FlutterResult)result {
-//     NSDictionary *args = call.arguments;
-//     bool hidden = [args[@"hidden"] boolValue];
-//     NSString *animationString = (NSString *) args[@"animation"];
-//     UIStatusBarAnimation animation;
-//     if ([animationString isEqualToString:@"none"]) {
-//         animation = UIStatusBarAnimationNone;
-//     } else if ([animationString isEqualToString:@"fade"]) {
-//         animation = UIStatusBarAnimationFade;
-//     } else {
-//         animation = UIStatusBarAnimationSlide;
-//     }
-//     [[UIApplication sharedApplication] setStatusBarHidden:hidden withAnimation:animation];
-//     result(@YES);
-// }
-
-
 @end

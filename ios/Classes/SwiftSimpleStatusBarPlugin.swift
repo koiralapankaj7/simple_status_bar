@@ -9,37 +9,38 @@ public class SwiftSimpleStatusBarPlugin: NSObject, FlutterPlugin {
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+                
         switch call.method {
-            
         case "toggleStatusBar":
-            do {
-                try toggleStatusBar(call, result)
-                result(NSNumber(value: true))
-            } catch {
-                print("Something went wrong while toggling statusbar")
-                result(NSNumber(value: false))
-            }
-            
+            toggleStatusBar(call, result)
         default:
             result(FlutterMethodNotImplemented)
         }
     }
     
     private func toggleStatusBar(_ call: FlutterMethodCall, _ result: FlutterResult) {
-        let args : Dictionary<String, AnyObject> = call.arguments as! Dictionary<String, AnyObject>
-        let hide : Bool = args["hide"] as! Bool
-        let animationArgs = args["animation"] as! String
-        var animation: UIStatusBarAnimation
-        
-        if (animationArgs == "slide") {
-            animation = .slide
-        } else if (animationArgs == "fade") {
-            animation = .fade
-        } else {
-            animation = .none
+        do {
+                        
+            let args : Dictionary<String, AnyObject> = call.arguments as! Dictionary<String, AnyObject>
+            let hide : Bool = args["hide"] as! Bool
+            let animationArgs = args["animation"] as! String
+            var animation: UIStatusBarAnimation
+            
+            if (animationArgs == "slide") {
+                animation = .slide
+            } else if (animationArgs == "fade") {
+                animation = .fade
+            } else {
+                animation = .none
+            }
+            UIApplication.shared.setStatusBarHidden(hide, with: UIStatusBarAnimation.slide)
+            result(NSNumber(value: true))
+            
+        } catch  {
+            result(NSNumber(value: false))
+            print("Something went wrong while toggling statusbar.......... \(error)")
+            
         }
-        UIApplication.shared.setStatusBarHidden(hide, with: animation)
-        
         
     }
     
