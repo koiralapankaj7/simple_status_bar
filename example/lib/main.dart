@@ -14,7 +14,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   //
 
-  SystemTheme systemTheme;
+  SystemUiMode systemTheme;
   final List<Color> colors = [
     Colors.blue.shade50,
     Colors.green,
@@ -50,36 +50,33 @@ class _MyAppState extends State<MyApp> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Center(
-              child: Text("Synchronized status bar toggle with drawer."),
-            ),
-            SizedBox(height: 30.0),
+            // Container(
+            //   color: Colors.grey.shade300,
+            //   padding: EdgeInsets.all(12.0),
+            //   child: Wrap(
+            //     alignment: WrapAlignment.spaceBetween,
+            //     runSpacing: 16.0,
+            //     spacing: 16.0,
+            //     children: colors
+            //         .map((Color color) => GestureDetector(
+            //               onTap: () {
+            //                 SimpleStatusBar.changeColor(color: color);
+            //               },
+            //               child: CircleAvatar(
+            //                 backgroundColor: color,
+            //               ),
+            //             ))
+            //         .toList(),
+            //   ),
+            // ),
+            // SizedBox(height: 30.0),
             Text(systemTheme.toString()),
-            Container(
-              color: Colors.grey.shade300,
-              padding: EdgeInsets.all(12.0),
-              child: Wrap(
-                alignment: WrapAlignment.spaceBetween,
-                runSpacing: 16.0,
-                spacing: 16.0,
-                children: colors
-                    .map((Color color) => GestureDetector(
-                          onTap: () {
-                            SimpleStatusBar.changeColor(color: color);
-                          },
-                          child: CircleAvatar(
-                            backgroundColor: color,
-                          ),
-                        ))
-                    .toList(),
-              ),
-            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 RaisedButton(
                   onPressed: () async {
-                    final result = await SimpleStatusBar.getSystemTheme();
+                    final result = await SimpleStatusBar.getSystemUiMode();
                     setState(() {
                       systemTheme = result;
                     });
