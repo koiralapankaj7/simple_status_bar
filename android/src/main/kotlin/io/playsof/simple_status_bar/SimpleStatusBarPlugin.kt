@@ -4,12 +4,15 @@ import android.R.color
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.app.Activity
+import android.content.ComponentCallbacks
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
+import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -21,10 +24,11 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
+import java.util.logging.StreamHandler
 
 
 /** SimpleStatusBarPlugin */
-class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
+class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Activity() {
     //
 
     private lateinit var activity: Activity
@@ -60,6 +64,8 @@ class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         this.activity = binding.activity
+        this.activity.isChangingConfigurations
+        Log.e("SimpleStatusBar", "========onAttachedToActivity============>  ${ this.activity.isChangingConfigurations}")
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
@@ -76,8 +82,8 @@ class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             return
         }
 
-        if (call.method == "getSystemTheme") {
-            getSystemTheme(call, result)
+        if (call.method == "getSystemUiMode") {
+            getSystemUiMode(call, result)
             return
         }
 
@@ -96,8 +102,8 @@ class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             val hidden: Boolean = call.argument<Boolean>("hide")!!
 
             val hideFlag = this.activity.window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_FULLSCREEN
-            val showFlag = this.activity.window.decorView.systemUiVisibility and  View.SYSTEM_UI_FLAG_FULLSCREEN.inv()
-            this.activity.window.decorView.systemUiVisibility = if (hidden)  hideFlag else showFlag
+            val showFlag = this.activity.window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_FULLSCREEN.inv()
+            this.activity.window.decorView.systemUiVisibility = if (hidden) hideFlag else showFlag
 
             result.success(true)
 
@@ -108,20 +114,44 @@ class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     }
 
-    private fun getSystemTheme(call: MethodCall, result: Result) {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.e("SimpleStatusBar", "========onCreate============>  ")
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        Log.e("SimpleStatusBar", "========onConfigurationChanged============>  ")
+        super.onConfigurationChanged(newConfig)
+        when (newConfig.uiMode) {
+            Configuration.UI_MODE_NIGHT_YES -> {
+                Log.e("SimpleStatusBar", "========UI MODE IS============> ${Configuration.UI_MODE_NIGHT_YES} ")
+            }
+            Configuration.UI_MODE_NIGHT_NO -> {
+                Log.e("SimpleStatusBar", "========UI MODE IS============> ${Configuration.UI_MODE_NIGHT_NO} ")
+            }
+            else -> {
+                Log.e("SimpleStatusBar", "========UI MODE IS============> ${newConfig.uiMode} ")
+            }
+        }
+        if (newConfig.uiMode == Configuration.UI_MODE_NIGHT_YES) {
+            Log.e("SimpleStatusBar", "====================> UI_MODE_NIGHT_YES ")
+        }
+    }
+
+    private fun getSystemUiMode(call: MethodCall, result: Result) {
         try {
-//            MODE_NIGHT_AUTO_BATTERY
+//
+//            Set by Battery Saver (the recommended default option) // MODE_NIGHT_AUTO_BATTERY
+//            System default (the recommended default option)       // MODE_NIGHT_FOLLOW_SYSTEM
             when (this.activity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
                 Configuration.UI_MODE_NIGHT_NO -> {
                     result.success(1)
-                    return
-                } // Night mode is not active, we're using the light theme
+                }
                 Configuration.UI_MODE_NIGHT_YES -> {
                     result.success(2)
-                    return
                 }
                 else -> {
-                    result.error("404", "Not found", "")
+                    result.success(3)
                 }
             }
 
@@ -139,16 +169,16 @@ class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 val isDarkColor: Boolean = call.argument<Boolean>("isDarkColor")!!
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
-                    val lightStatusBarFlag : Int = this.activity.window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    val lightStatusBarFlag: Int = this.activity.window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
                     val darkStatusBarFlag: Int = this.activity.window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-                    this.activity.window.decorView.systemUiVisibility = if (isDarkColor)  darkStatusBarFlag else lightStatusBarFlag
+                    this.activity.window.decorView.systemUiVisibility = if (isDarkColor) darkStatusBarFlag else lightStatusBarFlag
                 }
 
                 val startColor: Int = this.activity.window.statusBarColor
                 val endColor: Int = call.argument<Int>("color")!!
 
-                val valueAnimator : ValueAnimator = ValueAnimator.ofObject(ArgbEvaluator(), startColor, endColor)
+                val valueAnimator: ValueAnimator = ValueAnimator.ofObject(ArgbEvaluator(), startColor, endColor)
                 valueAnimator.addUpdateListener {
                     this.activity.window.statusBarColor = valueAnimator.animatedValue as Int
                 }
@@ -178,4 +208,5 @@ class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
     }
+
 }
