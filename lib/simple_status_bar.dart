@@ -13,9 +13,9 @@ class SimpleStatusBar {
     });
   }
 
-  static Future<SystemTheme> getSystemTheme() async {
-    final int type = await _channel.invokeMethod('getSystemTheme');
-    return type == 1 ? SystemTheme.LIGHT : SystemTheme.DARK;
+  static Future<SystemUiMode> getSystemUiMode() async {
+    final int type = await _channel.invokeMethod('getSystemUiMode');
+    return _getTheme(type);
   }
 
   static Future changeColor({@required Color color, double value}) async {
@@ -23,10 +23,7 @@ class SimpleStatusBar {
       throw Exception(["Exception occured while changing color. Reason => Color cannot be null."]);
     final double luminance = color.computeLuminance();
     final bool isDarkColor = luminance < (value ?? 0.4);
-
-    print(
-        "Computing Color Luminance : Luminance is $luminance ==================> DARK : $isDarkColor");
-
+    print("Computing Color Luminance :  $luminance ==================> DARK : $isDarkColor");
     await _channel.invokeMethod('changeColor', {'color': color.value, 'isDarkColor': isDarkColor});
   }
 
@@ -36,8 +33,7 @@ class SimpleStatusBar {
   // decorate status bar
 }
 
-enum SystemTheme { LIGHT, DARK, SYSTEM_DEFAULT, BATTERY_SAVER }
-
+enum SystemUiMode { LIGHT, DARK, SYSTEM_DEFAULT, UNKNOWN }
 enum StatusBarAnimation { SLIDE, FADE, NONE }
 
 String _getAnimation(StatusBarAnimation animation) {
@@ -48,5 +44,20 @@ String _getAnimation(StatusBarAnimation animation) {
       return 'fade';
     default:
       return 'slide';
+  }
+}
+
+SystemUiMode _getTheme(int type) {
+  switch (type) {
+    case 1:
+      return SystemUiMode.LIGHT;
+    case 2:
+      return SystemUiMode.DARK;
+    case 3:
+      return SystemUiMode.SYSTEM_DEFAULT;
+      break;
+    default:
+      return SystemUiMode.UNKNOWN;
+      break;
   }
 }
