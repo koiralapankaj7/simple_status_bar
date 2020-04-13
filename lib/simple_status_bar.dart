@@ -13,11 +13,47 @@ class SimpleStatusBar {
     });
   }
 
+  static Future changeStatusBarColor(
+      {@required Color color,
+      bool adaptiveBrightness,
+      double luminaceValue,
+      bool animate,
+      bool forIos,
+      bool forAndroid}) async {
+    if (color == null)
+      throw Exception(["Exception occured while changing color. Reason => Color cannot be null."]);
+    bool isDarkColor;
+    if (adaptiveBrightness ?? true) {
+      final double luminance = color.computeLuminance();
+      isDarkColor = luminance < (luminaceValue ?? 0.4);
+      print("Computing Color Luminance :  $luminance ==================> DARK : $isDarkColor");
+    }
+    await _channel.invokeMethod('changeStatusBarColor', {
+      'color': color,
+      'isDarkColor': isDarkColor,
+      'animate': animate ?? true,
+      'forIos': forIos ?? true,
+      'forAndroid': forAndroid ?? true,
+    });
+  }
+
+  static Future changeStatusBarBrightness({
+    @required Brightness brightness,
+    bool animate,
+  }) async {
+    // TODO Check null brightness
+    await _channel.invokeMethod('changeStatusBarBrightness', {
+      'brightness': brightness == Brightness.light ? 1 : 2,
+      'animate': animate ?? true,
+    });
+  }
+
   static Future<SystemUiMode> getSystemUiMode() async {
     final int type = await _channel.invokeMethod('getSystemUiMode');
     return _getTheme(type);
   }
 
+  @deprecated
   static Future changeColor({@required Color color, double value}) async {
     if (color == null)
       throw Exception(["Exception occured while changing color. Reason => Color cannot be null."]);
@@ -28,9 +64,6 @@ class SimpleStatusBar {
   }
 
   // listen theme state
-  // changeColor
-
-  // decorate status bar
 }
 
 enum SystemUiMode { LIGHT, DARK, SYSTEM_DEFAULT, UNKNOWN }
