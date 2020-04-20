@@ -6,6 +6,23 @@ import 'package:flutter/services.dart';
 class SimpleStatusBar {
   static const MethodChannel _channel = const MethodChannel('simple_status_bar');
 
+  static const String _SHOW_STATUS_BAR_METHOD = "showStatusBar";
+  static const String _HIDE_STATUS_BAR_METHOD = "hideStatusBar";
+  static const String _CHANGE_STATUS_BAR_COLOR_METHOD = "changeStatusBarColor";
+  static const String _GET_STATUS_BAR_BRIGHTNESS_METHOD = "getStatusBarBrightness";
+  static const String _CHANGE_STATUS_BAR_BRIGHTNESS_METHOD = "changeStatusBarBrightness";
+  static const String _GET_SYSTEM_UI_MODE = "getSystemUiMode";
+
+  // 1. Show status bar
+  static Future showStatusBar({StatusBarAnimation animation}) async {
+    return _channel.invokeMethod(_SHOW_STATUS_BAR_METHOD, {'animation': _getAnimation(animation)});
+  }
+
+  // 2. Hide status bar
+  static Future hideStatusBar({StatusBarAnimation animation}) async {
+    return _channel.invokeMethod(_HIDE_STATUS_BAR_METHOD, {'animation': _getAnimation(animation)});
+  }
+
   static Future<bool> toggle({bool hide, StatusBarAnimation animation}) async {
     return await _channel.invokeMethod('toggleStatusBar', {
       'hide': hide ?? false,
@@ -13,6 +30,7 @@ class SimpleStatusBar {
     });
   }
 
+  // 3. Change status bar color
   static Future changeStatusBarColor(
       {@required Color color,
       bool adaptiveBrightness,
@@ -28,7 +46,8 @@ class SimpleStatusBar {
       isDarkColor = luminance < (luminaceValue ?? 0.4);
       print("Computing Color Luminance :  $luminance ==================> DARK : $isDarkColor");
     }
-    await _channel.invokeMethod('changeStatusBarColor', {
+    print("Color value as string : ${color.toString()}");
+    await _channel.invokeMethod(_CHANGE_STATUS_BAR_COLOR_METHOD, {
       'color': color,
       'isDarkColor': isDarkColor,
       'animate': animate ?? true,
@@ -37,19 +56,25 @@ class SimpleStatusBar {
     });
   }
 
+  static Future<Brightness> getStatusBarBrightness() async {}
+
+  // 4. Change status bar brightness
   static Future changeStatusBarBrightness({
     @required Brightness brightness,
     bool animate,
   }) async {
-    // TODO Check null brightness
-    await _channel.invokeMethod('changeStatusBarBrightness', {
+    if (brightness == null)
+      throw Exception(
+          ["Exception occured while changing brightness. Reason => Brightness cannot be null."]);
+    await _channel.invokeMethod(_CHANGE_STATUS_BAR_BRIGHTNESS_METHOD, {
       'brightness': brightness == Brightness.light ? 1 : 2,
       'animate': animate ?? true,
     });
   }
 
+  // 5. Get system UI-Mode
   static Future<SystemUiMode> getSystemUiMode() async {
-    final int type = await _channel.invokeMethod('getSystemUiMode');
+    final int type = await _channel.invokeMethod(_GET_SYSTEM_UI_MODE);
     return _getTheme(type);
   }
 
