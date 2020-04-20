@@ -22,4 +22,7 @@
 ## 0.0.3
 
 - Get System Ui Mode -> Android(ok) and Ios(ok)
-- Set status bar color with adaptive brightness -> Android(ok) , Ios (Next version)
+
+## 0.0.4
+
+- Change system brightness
