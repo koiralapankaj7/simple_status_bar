@@ -7,9 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1467B132244325650088B5B0 /* testing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1467B131244325650088B5B0 /* testing.swift */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
-		14EE04F024449250008655C7 /* testing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14EE04EF24449250008655C7 /* testing.swift */; };
+		14EDC60D244D3AF80080F6A3 /* testing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14EDC60C244D3AF80080F6A3 /* testing.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		3B80C3941E831B6300D905FE /* App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B80C3931E831B6300D905FE /* App.framework */; };
 		3B80C3951E831B6300D905FE /* App.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B80C3931E831B6300D905FE /* App.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -38,10 +37,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1467B131244325650088B5B0 /* testing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testing.swift; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
-		14EE04EF24449250008655C7 /* testing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = testing.swift; path = ../../../../../PACKAGES/simple_status_bar/example/ios/Runner/testing.swift; sourceTree = "<group>"; };
+		14EDC60C244D3AF80080F6A3 /* testing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testing.swift; sourceTree = "<group>"; };
 		1518773BA6FFC12E7A6FB2D5 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		3B80C3931E831B6300D905FE /* App.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = App.framework; path = Flutter/App.framework; sourceTree = "<group>"; };
@@ -137,11 +135,7 @@
 				1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */,
 				74858FAE1ED2DC5600515810 /* AppDelegate.swift */,
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
-<<<<<<< Updated upstream
-				1467B131244325650088B5B0 /* testing.swift */,
-=======
-				14EE04EF24449250008655C7 /* testing.swift */,
->>>>>>> Stashed changes
+				14EDC60C244D3AF80080F6A3 /* testing.swift */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -301,11 +295,7 @@
 			files = (
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
-<<<<<<< Updated upstream
-				1467B132244325650088B5B0 /* testing.swift in Sources */,
-=======
-				14EE04F024449250008655C7 /* testing.swift in Sources */,
->>>>>>> Stashed changes
+				14EDC60D244D3AF80080F6A3 /* testing.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
