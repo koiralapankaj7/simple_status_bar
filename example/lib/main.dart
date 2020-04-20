@@ -50,26 +50,26 @@ class _MyAppState extends State<MyApp> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Container(
-              color: Colors.grey.shade300,
-              padding: EdgeInsets.all(12.0),
-              child: Wrap(
-                alignment: WrapAlignment.spaceBetween,
-                runSpacing: 16.0,
-                spacing: 16.0,
-                children: colors
-                    .map((Color color) => GestureDetector(
-                          onTap: () {
-                            SimpleStatusBar.changeStatusBarColor(color: color);
-                            print(color.value);
-                          },
-                          child: CircleAvatar(
-                            backgroundColor: color,
-                          ),
-                        ))
-                    .toList(),
-              ),
-            ),
+            // Container(
+            //   color: Colors.grey.shade300,
+            //   padding: EdgeInsets.all(12.0),
+            //   child: Wrap(
+            //     alignment: WrapAlignment.spaceBetween,
+            //     runSpacing: 16.0,
+            //     spacing: 16.0,
+            //     children: colors
+            //         .map((Color color) => GestureDetector(
+            //               onTap: () {
+            //                 SimpleStatusBar.changeStatusBarColor(color: color);
+            //                 print(color.value);
+            //               },
+            //               child: CircleAvatar(
+            //                 backgroundColor: color,
+            //               ),
+            //             ))
+            //         .toList(),
+            //   ),
+            // ),
             SizedBox(height: 30.0),
             Text(systemTheme.toString()),
             Text(brightness.toString()),
