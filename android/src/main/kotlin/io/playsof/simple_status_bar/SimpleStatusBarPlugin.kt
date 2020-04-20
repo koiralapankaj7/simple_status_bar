@@ -34,6 +34,12 @@ class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, A
     private lateinit var activity: Activity
     private lateinit var context: Context
 
+    private val SHOW_STATUS_BAR_METHOD: String = "showStatusBar";
+    private val HIDE_STATUS_BAR_METHOD: String = "hideStatusBar";
+    private val CHANGE_STATUS_BAR_COLOR_METHOD: String = "changeStatusBarColor";
+    private val CHANGE_STATUS_BAR_BRIGHTNESS_METHOD: String = "changeStatusBarBrightness";
+    private val GET_SYSTEM_UI_MODE: String = "getSystemUiMode";
+
 
     override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         onAttachedToEngine(binding.applicationContext, binding.binaryMessenger)
@@ -65,7 +71,7 @@ class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, A
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         this.activity = binding.activity
         this.activity.isChangingConfigurations
-        Log.e("SimpleStatusBar", "========onAttachedToActivity============>  ${ this.activity.isChangingConfigurations}")
+        Log.e("SimpleStatusBar", "========onAttachedToActivity============>  ${this.activity.isChangingConfigurations}")
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
@@ -76,92 +82,66 @@ class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, A
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
 
-
-        if (call.method == "toggleStatusBar") {
-            toggleStatusBar(call, result)
-            return
-        }
-
-        if (call.method == "getSystemUiMode") {
-            getSystemUiMode(call, result)
-            return
-        }
-
-        if (call.method == "changeColor") {
-            changeColor(call, result)
-            return
-        }
-
-
-        result.notImplemented()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.KITKAT)
-    private fun toggleStatusBar(call: MethodCall, result: Result) {
-        try {
-            val hidden: Boolean = call.argument<Boolean>("hide")!!
-
-            val hideFlag = this.activity.window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_FULLSCREEN
-            val showFlag = this.activity.window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_FULLSCREEN.inv()
-            this.activity.window.decorView.systemUiVisibility = if (hidden) hideFlag else showFlag
-
-            result.success(true)
-
-        } catch (exception: Exception) {
-            Log.e("SimpleStatusBar", "SimpleStatusBar: Failed to hide status bar : $exception")
-            result.success(false)
-        }
-
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.e("SimpleStatusBar", "========onCreate============>  ")
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        Log.e("SimpleStatusBar", "========onConfigurationChanged============>  ")
-        super.onConfigurationChanged(newConfig)
-        when (newConfig.uiMode) {
-            Configuration.UI_MODE_NIGHT_YES -> {
-                Log.e("SimpleStatusBar", "========UI MODE IS============> ${Configuration.UI_MODE_NIGHT_YES} ")
+        when (call.method) {
+            SHOW_STATUS_BAR_METHOD -> {
+                showStatusBar(call, result)
+                return
             }
-            Configuration.UI_MODE_NIGHT_NO -> {
-                Log.e("SimpleStatusBar", "========UI MODE IS============> ${Configuration.UI_MODE_NIGHT_NO} ")
+            HIDE_STATUS_BAR_METHOD -> {
+                hideStatusBar(call, result)
+                return
+            }
+            CHANGE_STATUS_BAR_COLOR_METHOD -> {
+                changeColor(call, result)
+                return
+            }
+            CHANGE_STATUS_BAR_BRIGHTNESS_METHOD -> {
+                changeStatusBarBrightness(call, result)
+                return
+            }
+            GET_SYSTEM_UI_MODE -> {
+                getSystemUiMode(call, result)
+                return
             }
             else -> {
-                Log.e("SimpleStatusBar", "========UI MODE IS============> ${newConfig.uiMode} ")
+                result.notImplemented()
             }
         }
-        if (newConfig.uiMode == Configuration.UI_MODE_NIGHT_YES) {
-            Log.e("SimpleStatusBar", "====================> UI_MODE_NIGHT_YES ")
-        }
+
+
     }
 
-    private fun getSystemUiMode(call: MethodCall, result: Result) {
-        try {
+    /// Show status bar
+    private fun showStatusBar(call: MethodCall, result: Result) {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        val showFlag = this.activity.window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_FULLSCREEN.inv()
+        this.activity.window.decorView.systemUiVisibility = showFlag
+        result.success(true)
+//        }
+    }
+
+    /// Hide status bar color
+    private fun hideStatusBar(call: MethodCall, result: Result) {
+        val hideFlag = this.activity.window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_FULLSCREEN
+        this.activity.window.decorView.systemUiVisibility = hideFlag
+    }
+
+//    @RequiresApi(Build.VERSION_CODES.KITKAT)
+//    private fun toggleSB(call: MethodCall, hide : Boolean) {
+//        try {
+//            val hideFlag = this.activity.window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_FULLSCREEN
+//            val showFlag = this.activity.window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_FULLSCREEN.inv()
+////            this.activity.window.decorView.systemUiVisibility = if (hidden) hideFlag else showFlag
 //
-//            Set by Battery Saver (the recommended default option) // MODE_NIGHT_AUTO_BATTERY
-//            System default (the recommended default option)       // MODE_NIGHT_FOLLOW_SYSTEM
-            when (this.activity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-                Configuration.UI_MODE_NIGHT_NO -> {
-                    result.success(1)
-                }
-                Configuration.UI_MODE_NIGHT_YES -> {
-                    result.success(2)
-                }
-                else -> {
-                    result.success(3)
-                }
-            }
+//            result.success(true)
+//
+//        } catch (exception: Exception) {
+//            Log.e("SimpleStatusBar", "SimpleStatusBar: Failed to hide status bar : $exception")
+//            result.success(false)
+//        }
+//
+//    }
 
-        } catch (exception: Exception) {
-            Log.e("SimpleStatusBar", "SimpleStatusBar: Failed to get system theme : $exception")
-            result.error("500", "Something went wrong", "")
-        }
-
-
-    }
 
     private fun changeColor(call: MethodCall, result: Result) {
         try {
@@ -204,6 +184,65 @@ class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, A
             result.error("500", "Something went wrong", "")
         }
     }
+
+    /// Change status bar brightness
+    private fun changeStatusBarBrightness(call: MethodCall, result: Result) {
+        val brightness: Int = call.argument<Int>("brightness")!!
+        val animate : Boolean = call.argument<Boolean>("animate")!!
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val lightStatusBarFlag: Int = this.activity.window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            val darkStatusBarFlag: Int = this.activity.window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+            this.activity.window.decorView.systemUiVisibility = if (brightness == 1)  darkStatusBarFlag else lightStatusBarFlag
+            result.success(true)
+        }
+    }
+
+
+    /// Get system ui mode
+    private fun getSystemUiMode(call: MethodCall, result: Result) {
+        try {
+//
+//            Set by Battery Saver (the recommended default option) // MODE_NIGHT_AUTO_BATTERY
+//            System default (the recommended default option)       // MODE_NIGHT_FOLLOW_SYSTEM
+            when (this.activity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+                Configuration.UI_MODE_NIGHT_NO -> {
+                    result.success(1)
+                }
+                Configuration.UI_MODE_NIGHT_YES -> {
+                    result.success(2)
+                }
+                else -> {
+                    result.success(3)
+                }
+            }
+
+        } catch (exception: Exception) {
+            Log.e("SimpleStatusBar", "SimpleStatusBar: Failed to get system theme : $exception")
+            result.error("500", "Something went wrong", "")
+        }
+
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        Log.e("SimpleStatusBar", "========onConfigurationChanged============>  ")
+        super.onConfigurationChanged(newConfig)
+        when (newConfig.uiMode) {
+            Configuration.UI_MODE_NIGHT_YES -> {
+                Log.e("SimpleStatusBar", "========UI MODE IS============> ${Configuration.UI_MODE_NIGHT_YES} ")
+            }
+            Configuration.UI_MODE_NIGHT_NO -> {
+                Log.e("SimpleStatusBar", "========UI MODE IS============> ${Configuration.UI_MODE_NIGHT_NO} ")
+            }
+            else -> {
+                Log.e("SimpleStatusBar", "========UI MODE IS============> ${newConfig.uiMode} ")
+            }
+        }
+        if (newConfig.uiMode == Configuration.UI_MODE_NIGHT_YES) {
+            Log.e("SimpleStatusBar", "====================> UI_MODE_NIGHT_YES ")
+        }
+    }
+
 
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
