@@ -41,7 +41,11 @@ class _MyAppState extends State<MyApp> {
         ),
         drawer: SimpleDrawer(
           drawerCallback: (bool isOpened) {
-            SimpleStatusBar.toggle(hide: isOpened, animation: StatusBarAnimation.SLIDE);
+            if (isOpened) {
+              SimpleStatusBar.hideStatusBar();
+            } else {
+              SimpleStatusBar.showStatusBar();
+            }
           },
           background: Colors.green,
           child: Column(children: <Widget>[]),
@@ -50,29 +54,30 @@ class _MyAppState extends State<MyApp> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // Container(
-            //   color: Colors.grey.shade300,
-            //   padding: EdgeInsets.all(12.0),
-            //   child: Wrap(
-            //     alignment: WrapAlignment.spaceBetween,
-            //     runSpacing: 16.0,
-            //     spacing: 16.0,
-            //     children: colors
-            //         .map((Color color) => GestureDetector(
-            //               onTap: () {
-            //                 SimpleStatusBar.changeStatusBarColor(color: color);
-            //                 print(color.value);
-            //               },
-            //               child: CircleAvatar(
-            //                 backgroundColor: color,
-            //               ),
-            //             ))
-            //         .toList(),
-            //   ),
-            // ),
+            Container(
+              color: Colors.grey.shade300,
+              padding: EdgeInsets.all(12.0),
+              child: Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                runSpacing: 16.0,
+                spacing: 16.0,
+                children: colors
+                    .map((Color color) => GestureDetector(
+                          onTap: () {
+                            SimpleStatusBar.changeStatusBarColor(color: color);
+                            print(color.value);
+                          },
+                          child: CircleAvatar(
+                            backgroundColor: color,
+                          ),
+                        ))
+                    .toList(),
+              ),
+            ),
             SizedBox(height: 30.0),
             Text(systemTheme.toString()),
             Text(brightness.toString()),
+            Text("Get Brightness : ${brightness.toString()}"),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
@@ -89,19 +94,21 @@ class _MyAppState extends State<MyApp> {
                   onPressed: _toggleBrightnessPressed,
                   child: Text("Toggle Brightness"),
                 ),
+                RaisedButton(
+                  onPressed: () async {
+                    final res = await SimpleStatusBar.getStatusBarBrightness();
+                    setState(() {
+                      brightness = res;
+                    });
+                  },
+                  child: Text("Get Brightness"),
+                ),
               ],
             ),
           ],
         ),
       ),
     );
-  }
-
-  void _onGetThemePressed() async {
-    final result = await SimpleStatusBar.getSystemUiMode();
-    setState(() {
-      systemTheme = result;
-    });
   }
 
   void _toggleBrightnessPressed() async {

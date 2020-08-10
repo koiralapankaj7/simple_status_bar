@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
@@ -26,6 +27,11 @@ import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
 import java.util.logging.StreamHandler
 
+private const val HIDE_STATUS_BAR_METHOD = "hideStatusBar"
+private const val CHANGE_STATUS_BAR_COLOR_METHOD: String = "changeStatusBarColor"
+private const val GET_STATUS_BAR_BRIGHTNESS_METHOD : String = "getStatusBarBrightness"
+private const val CHANGE_STATUS_BAR_BRIGHTNESS_METHOD: String = "changeStatusBarBrightness"
+private const val GET_SYSTEM_UI_MODE: String = "getSystemUiMode"
 
 /** SimpleStatusBarPlugin */
 class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Activity() {
@@ -33,12 +39,6 @@ class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, A
 
     private lateinit var activity: Activity
     private lateinit var context: Context
-
-    private val SHOW_STATUS_BAR_METHOD: String = "showStatusBar";
-    private val HIDE_STATUS_BAR_METHOD: String = "hideStatusBar";
-    private val CHANGE_STATUS_BAR_COLOR_METHOD: String = "changeStatusBarColor";
-    private val CHANGE_STATUS_BAR_BRIGHTNESS_METHOD: String = "changeStatusBarBrightness";
-    private val GET_SYSTEM_UI_MODE: String = "getSystemUiMode";
 
 
     override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
@@ -52,6 +52,8 @@ class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, A
             instance.activity = registrar.activity()
             instance.onAttachedToEngine(registrar.context(), registrar.messenger())
         }
+
+        private const val SHOW_STATUS_BAR_METHOD: String = "showStatusBar"
     }
 
     fun onAttachedToEngine(context: Context, binaryMessenger: BinaryMessenger) {
@@ -59,7 +61,6 @@ class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, A
         val channel = MethodChannel(binaryMessenger, "simple_status_bar")
         channel.setMethodCallHandler(this)
     }
-
 
     override fun onDetachedFromActivity() {
     }
@@ -83,7 +84,7 @@ class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, A
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
 
         when (call.method) {
-            SHOW_STATUS_BAR_METHOD -> {
+            Companion.SHOW_STATUS_BAR_METHOD -> {
                 showStatusBar(call, result)
                 return
             }
@@ -93,6 +94,10 @@ class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, A
             }
             CHANGE_STATUS_BAR_COLOR_METHOD -> {
                 changeColor(call, result)
+                return
+            }
+            GET_STATUS_BAR_BRIGHTNESS_METHOD -> {
+                getStatusBarBrightness(call, result)
                 return
             }
             CHANGE_STATUS_BAR_BRIGHTNESS_METHOD -> {
@@ -146,6 +151,9 @@ class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, A
     private fun changeColor(call: MethodCall, result: Result) {
         try {
 
+//            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 val isDarkColor: Boolean = call.argument<Boolean>("isDarkColor")!!
 
@@ -185,15 +193,25 @@ class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, A
         }
     }
 
+    /// Get status bar brightness
+    private fun getStatusBarBrightness(call: MethodCall, result: Result) {
+        Log.e("SSB","Settings.System.SCREEN_BRIGHTNESS : ${Settings.System.SCREEN_BRIGHTNESS}")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Log.e("SSB","this.activity.window.attributes.screenBrightness : ${this.activity.window.statusBarColor}")
+        }
+//        Settings.System.SCREEN_BRIGHTNESS
+//        this.activity.window.attributes.screenBrightness
+    }
+
     /// Change status bar brightness
     private fun changeStatusBarBrightness(call: MethodCall, result: Result) {
         val brightness: Int = call.argument<Int>("brightness")!!
-        val animate : Boolean = call.argument<Boolean>("animate")!!
+        val animate: Boolean = call.argument<Boolean>("animate")!!
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val lightStatusBarFlag: Int = this.activity.window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
             val darkStatusBarFlag: Int = this.activity.window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-            this.activity.window.decorView.systemUiVisibility = if (brightness == 1)  darkStatusBarFlag else lightStatusBarFlag
+            this.activity.window.decorView.systemUiVisibility = if (brightness == 1) darkStatusBarFlag else lightStatusBarFlag
             result.success(true)
         }
     }
@@ -242,7 +260,6 @@ class SimpleStatusBarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, A
             Log.e("SimpleStatusBar", "====================> UI_MODE_NIGHT_YES ")
         }
     }
-
 
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {

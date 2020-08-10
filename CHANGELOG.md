@@ -26,3 +26,7 @@
 ## 0.0.4
 
 - Change system brightness
+
+## 0.0.5
+
+- Platform specific test

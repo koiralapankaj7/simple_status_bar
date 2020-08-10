@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter/services.dart';
@@ -15,19 +17,18 @@ class SimpleStatusBar {
 
   // 1. Show status bar
   static Future showStatusBar({StatusBarAnimation animation}) async {
-    return _channel.invokeMethod(_SHOW_STATUS_BAR_METHOD, {'animation': _getAnimation(animation)});
+    if (Platform.isAndroid || Platform.isIOS) {
+      return _channel
+          .invokeMethod(_SHOW_STATUS_BAR_METHOD, {'animation': _getAnimation(animation)});
+    }
   }
 
   // 2. Hide status bar
   static Future hideStatusBar({StatusBarAnimation animation}) async {
-    return _channel.invokeMethod(_HIDE_STATUS_BAR_METHOD, {'animation': _getAnimation(animation)});
-  }
-
-  static Future<bool> toggle({bool hide, StatusBarAnimation animation}) async {
-    return await _channel.invokeMethod('toggleStatusBar', {
-      'hide': hide ?? false,
-      'animation': _getAnimation(animation),
-    });
+    if (Platform.isAndroid || Platform.isIOS) {
+      return _channel
+          .invokeMethod(_HIDE_STATUS_BAR_METHOD, {'animation': _getAnimation(animation)});
+    }
   }
 
   // 3. Change status bar color
@@ -38,54 +39,72 @@ class SimpleStatusBar {
       bool animate,
       bool forIos,
       bool forAndroid}) async {
-    if (color == null)
-      throw Exception(["Exception occured while changing color. Reason => Color cannot be null."]);
-    bool isDarkColor;
-    if (adaptiveBrightness ?? true) {
-      final double luminance = color.computeLuminance();
-      isDarkColor = luminance < (luminaceValue ?? 0.4);
-      print("Computing Color Luminance :  $luminance ==================> DARK : $isDarkColor");
+    if (Platform.isAndroid || Platform.isIOS) {
+      if (color == null)
+        throw Exception(
+            ["Exception occured while changing color. Reason => Color cannot be null."]);
+      bool isDarkColor;
+      if (adaptiveBrightness ?? true) {
+        final double luminance = color.computeLuminance();
+        isDarkColor = luminance < (luminaceValue ?? 0.4);
+        print("Computing Color Luminance :  $luminance ==================> DARK : $isDarkColor");
+      }
+      print("Color value as string : ${color.toString()}");
+      await _channel.invokeMethod(_CHANGE_STATUS_BAR_COLOR_METHOD, {
+        'color': color.value,
+        'isDarkColor': isDarkColor,
+        'animate': animate ?? true,
+        'forIos': forIos ?? true,
+        'forAndroid': forAndroid ?? true,
+      });
     }
-    print("Color value as string : ${color.toString()}");
-    await _channel.invokeMethod(_CHANGE_STATUS_BAR_COLOR_METHOD, {
-      'color': color,
-      'isDarkColor': isDarkColor,
-      'animate': animate ?? true,
-      'forIos': forIos ?? true,
-      'forAndroid': forAndroid ?? true,
-    });
   }
 
-  static Future<Brightness> getStatusBarBrightness() async {}
+  static Future<Brightness> getStatusBarBrightness() async {
+    if (Platform.isAndroid || Platform.isIOS) {
+      final int type = await _channel.invokeMethod(_GET_STATUS_BAR_BRIGHTNESS_METHOD);
+      return type == 1 ? Brightness.light : Brightness.dark;
+    }
+    return null;
+  }
 
   // 4. Change status bar brightness
   static Future changeStatusBarBrightness({
     @required Brightness brightness,
     bool animate,
   }) async {
-    if (brightness == null)
-      throw Exception(
-          ["Exception occured while changing brightness. Reason => Brightness cannot be null."]);
-    await _channel.invokeMethod(_CHANGE_STATUS_BAR_BRIGHTNESS_METHOD, {
-      'brightness': brightness == Brightness.light ? 1 : 2,
-      'animate': animate ?? true,
-    });
+    if (Platform.isAndroid || Platform.isIOS) {
+      if (brightness == null)
+        throw Exception(
+            ["Exception occured while changing brightness. Reason => Brightness cannot be null."]);
+      await _channel.invokeMethod(_CHANGE_STATUS_BAR_BRIGHTNESS_METHOD, {
+        'brightness': brightness == Brightness.light ? 1 : 2,
+        'animate': animate ?? true,
+      });
+    }
   }
 
   // 5. Get system UI-Mode
   static Future<SystemUiMode> getSystemUiMode() async {
-    final int type = await _channel.invokeMethod(_GET_SYSTEM_UI_MODE);
-    return _getTheme(type);
+    if (Platform.isAndroid || Platform.isIOS) {
+      final int type = await _channel.invokeMethod(_GET_SYSTEM_UI_MODE);
+      return _getTheme(type);
+    }
+    return SystemUiMode.UNKNOWN;
   }
 
   @deprecated
   static Future changeColor({@required Color color, double value}) async {
-    if (color == null)
-      throw Exception(["Exception occured while changing color. Reason => Color cannot be null."]);
-    final double luminance = color.computeLuminance();
-    final bool isDarkColor = luminance < (value ?? 0.4);
-    print("Computing Color Luminance :  $luminance ==================> DARK : $isDarkColor");
-    await _channel.invokeMethod('changeColor', {'color': color.value, 'isDarkColor': isDarkColor});
+    if (Platform.isAndroid || Platform.isIOS) {
+      if (color == null)
+        throw Exception(
+            ["Exception occured while changing color. Reason => Color cannot be null."]);
+      final double luminance = color.computeLuminance();
+      final bool isDarkColor = luminance < (value ?? 0.4);
+      print("Computing Color Luminance :  $luminance ==================> DARK : $isDarkColor");
+      await _channel
+          .invokeMethod('changeColor', {'color': color.value, 'isDarkColor': isDarkColor});
+    }
   }
 
   // listen theme state
