@@ -3,19 +3,18 @@ import 'package:flutter/material.dart';
 typedef _DrawerCallback = void Function(bool opened);
 
 class SimpleDrawer extends StatefulWidget {
-  final _DrawerCallback drawerCallback;
+  final _DrawerCallback? drawerCallback;
   final Widget child;
-  final double width;
-  final Color background;
+  final double? width;
+  final Color? background;
 
   const SimpleDrawer({
-    Key key,
+    Key? key,
     this.drawerCallback,
-    @required this.child,
+    required this.child,
     this.width,
     this.background,
-  })  : assert(child != null, 'Simple Drawer child cannot be null.'),
-        super(key: key);
+  }) : super(key: key);
 
   @override
   _SimpleDrawerState createState() => _SimpleDrawerState();
@@ -25,12 +24,12 @@ class _SimpleDrawerState extends State<SimpleDrawer> {
   @override
   void initState() {
     super.initState();
-    widget.drawerCallback(true);
+    widget.drawerCallback!(true);
   }
 
   @override
   void dispose() {
-    widget.drawerCallback(false);
+    widget.drawerCallback!(false);
     super.dispose();
   }
 
