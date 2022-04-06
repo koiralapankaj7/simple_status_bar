@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:simple_status_bar/simple_status_bar.dart';
-import 'package:simple_status_bar/simple_drawer.dart';
 
 void main() => runApp(MyApp());
 
