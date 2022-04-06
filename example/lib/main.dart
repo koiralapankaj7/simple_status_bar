@@ -41,7 +41,8 @@ class _MyAppState extends State<MyApp> {
         ),
         drawer: SimpleDrawer(
           drawerCallback: (bool isOpened) {
-            SimpleStatusBar.toggle(hide: isOpened, animation: StatusBarAnimation.SLIDE);
+            SimpleStatusBar.toggle(
+                hide: isOpened, animation: StatusBarAnimation.SLIDE);
           },
           background: Colors.green,
           child: Column(children: <Widget>[]),
@@ -76,7 +77,7 @@ class _MyAppState extends State<MyApp> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                RaisedButton(
+                TextButton(
                   onPressed: () async {
                     final result = await SimpleStatusBar.getSystemUiMode();
                     setState(() {
@@ -85,7 +86,7 @@ class _MyAppState extends State<MyApp> {
                   },
                   child: Text("Get theme"),
                 ),
-                RaisedButton(
+                TextButton(
                   onPressed: _toggleBrightnessPressed,
                   child: Text("Toggle Brightness"),
                 ),
@@ -97,17 +98,18 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  void _onGetThemePressed() async {
-    final result = await SimpleStatusBar.getSystemUiMode();
-    setState(() {
-      systemTheme = result;
-    });
-  }
+  // void _onGetThemePressed() async {
+  //   final result = await SimpleStatusBar.getSystemUiMode();
+  //   setState(() {
+  //     systemTheme = result;
+  //   });
+  // }
 
   void _toggleBrightnessPressed() async {
     print("Toogle brightness clicked");
-    final Brightness bright =
-        this.brightness == Brightness.light ? Brightness.dark : Brightness.light;
+    final Brightness bright = this.brightness == Brightness.light
+        ? Brightness.dark
+        : Brightness.light;
     await SimpleStatusBar.changeStatusBarBrightness(brightness: bright);
     setState(() {
       this.brightness = bright;
